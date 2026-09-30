@@ -10,14 +10,13 @@ function antarctica(u,p,t)
     p = NamedTuple(p) # Whenever p.n is called, n is defined in the Dict
     
     I = 0.5 #Change this to be based on L
-    g = 1 - I # Vacant space
+    g = 1 - I - b # Vacant space
 
     α_tot = p.α_b * b * g + p.α_I * I + p.α_g * g #Total albedo is the albedo added up
     ϵ = p.E + b * p.ϕ  # Emmisivity
         
     dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4 / p.C
-    db = growth_opt(b, T, p.T_opt, p.k, g)
-    #db = b * (g * β_b - p.λ_b)
+    db = change_plant(b, T, g, p.T_opt, p.k, p.λ_bopt)
     dL = change_ice(L, T) 
     #These are the differential equations
 
@@ -32,13 +31,11 @@ p = Dict(
     :α_b => 0.4,   # Albedo (reflectivity) value of the plants
     :α_I => 0.9,   # Albedo of the ice
     :α_g => 0.1,   # Albedo of the ground
-    :λ_b => 0.05,     # Loss rate of plants
+    :λ_bopt => 0.05,     # Loss rate of plants by the optimal temperature
     :E => 0.75,     # Default emmisivity of the atmosphere, without plants
     :ϕ => 0.028,    # Effectivity of the plants on emmisivity 
     :k => 32.5,      # Survivavable deviation in temperature wherein plants can still reproduce 
     :T_opt => 265.65, # Optimal temperature for plant reproducition
-    :C => 1.0,        # Time scale for the dT function 
-    :DFF => 0.1 * 365 #Ice growth surface area 
     )
  
    
