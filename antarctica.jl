@@ -1,7 +1,7 @@
 using DynamicalSystemsBase
 using CairoMakie
 
-include("model_plantGrowth.jl") 
+#include("model_plantGrowth.jl") 
 #include("model_glacier.jl")
 
 function antarctica(u,p,t)
@@ -14,11 +14,11 @@ function antarctica(u,p,t)
     ϵ = p.E + b * p.ϕ  # Emmisivity
 
     β_b = growth_b(T, p.T_opt, p.k) #Defining our growth
-    λ_b = loss_b(T, p.T_opt, p.k) #Defining our loss
+    λ_b = loss_b(T, p.T_opt, p.k, p.λ_bopt) #Defining our loss
     
     dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4 
    # db = growth_opt(b, T, p.T_opt, p.k, g, p.λ_b)
-    db = b * (g * β_b - p.λ_b)
+    db = b * (g * (β_b - λ_b))
 #    dI = differential_ice(I, T, g, p.DFF, p.p_snow)
     dI = 0
     #These are the differential equations
@@ -33,7 +33,7 @@ function growth_b(T, T_opt, k) # Growth function for plants
         return(0)
     end
 end
-function loss_b(T, T_opt, k) # loss function for plants
+function loss_b(T, T_opt, k, λ_bopt) # loss function for plants
     if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
         return(λ_bopt+(1-λ_bopt)*(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
     else
@@ -61,7 +61,7 @@ p = Dict(
    
 print(p)
 
-u0 = [263.0, 0.3, 0.0] #Starting value of T, b, I
+u0 = [243.0, 0.3, 0.0] #Starting value of T, b, I
 t0 = 0.0 #Starting time
 ds = CoupledODEs(antarctica, u0, p) #Runs the function over time
 
@@ -88,5 +88,4 @@ lines!(ax_temp, t, X_columns[1])
 lines!(ax_plant, t, X_columns[2], color = :green)
 
 fig
-
-
+Print("Kaas!")
