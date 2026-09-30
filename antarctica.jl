@@ -18,7 +18,7 @@ function antarctica(u,p,t)
     
     dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4 
    # db = growth_opt(b, T, p.T_opt, p.k, g, p.λ_b)
-    db = b * (g * (β_b - λ_b))
+    db = b * (β_b - λ_b)
 #    dI = differential_ice(I, T, g, p.DFF, p.p_snow)
     dI = 0
     #These are the differential equations
