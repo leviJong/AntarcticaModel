@@ -16,25 +16,19 @@ function plant(u,p,t)
     p = NamedTuple(p)
 
     g = 1 - b
-    
-    if growth_function == 0
-        db = growth_opt(b, p.T, p.T_opt, p.k, g, λ) 
-    elseif growth_function == 1
-        db = growth_log(b, g, p.r, λ)
-    end
-
+    db = growth_plant(b, p.T, p.T_opt, p.k) 
     return SVector(db)
 end
 
-function growth_opt(b, T, T_opt, k, g) # Growth function for plants
+function growth_opt(b, T, T_opt, k) # Growth function for plants
     if k > abs(T - T_opt)
         β_b = 1-(k^-2)*(T-T_opt)^2
     else
         β_b = 0
     end
-    λ = loss_plant(T, T_opt, k)
+    λ = loss_plant(T, T_opt, k, λ_bopt)
 
-    db = b * (g * β_b - λ)
+    db = b * (β_b - λ)
     return(db)
 end
 
@@ -44,12 +38,6 @@ function loss_b(T, T_opt, k, λ_bopt) # loss function for plants
     else
         return(1)
     end
-end
-
-
-function growth_log(b, g, r, λ)
-    db = b*r*(1 - (b/g)) - λ*b
-    return(db)
 end
 
 u0 = [0.3]
