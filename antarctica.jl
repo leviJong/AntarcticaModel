@@ -14,7 +14,8 @@ function antarctica(u,p,t)
     ϵ = p.E + b * p.ϕ  # Emmisivity
 
     β_b = growth_b(T, p.T_opt, p.k) #Defining our growth
-        
+    λ_b = loss_b(T, p.T_opt, p.k) #Defining our loss
+    
     dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4 
    # db = growth_opt(b, T, p.T_opt, p.k, g, p.λ_b)
     db = b * (g * β_b - p.λ_b)
@@ -32,6 +33,13 @@ function growth_b(T, T_opt, k) # Growth function for plants
         return(0)
     end
 end
+function loss_b(T, T_opt, k) # loss function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
+        return(λ_bopt+(1-λ_bopt)*(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
+    else
+        return(1)
+    end
+end
 
 p = Dict(
     :σ => (5.670)*10^(-8), #Stefanboltzman constante
@@ -41,7 +49,7 @@ p = Dict(
     :α_b => 0.4,   # Albedo (reflectivity) value of the plants
     :α_I => 0.9,   # Albedo of the ice
     :α_g => 0.1,   # Albedo of the ground
-    :λ_b => 0.05,     # Loss rate of plants
+    :λ_bopt => 0.05,     # Loss rate of plants
     :E => 0.75,     # Default emmisivity of the atmosphere, without plants
     :ϕ => 0.028,    # Effectivity of the plants on emmisivity 
     :k => 32.5,      # Survivavable deviation in temperature wherein plants can still reproduce 
