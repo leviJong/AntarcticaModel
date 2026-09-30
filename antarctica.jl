@@ -1,7 +1,7 @@
 using DynamicalSystemsBase
 using CairoMakie
 
-#include("model_plantGrowth.jl") 
+include("model_plantGrowth.jl") 
 #include("model_glacier.jl")
 
 function antarctica(u,p,t)
@@ -25,22 +25,6 @@ function antarctica(u,p,t)
 
     return SVector(dT,db,dI)
 end
-
-function growth_b(T, T_opt, k) # Growth function for plants
-    if k > abs(T - T_opt) #If temperature is outside deviation, then growth=0
-        return(1-(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
-    else
-        return(0)
-    end
-end
-function loss_b(T, T_opt, k, λ_bopt) # loss function for plants
-    if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
-        return(λ_bopt+(1-λ_bopt)*(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
-    else
-        return(1)
-    end
-end
-
 p = Dict(
     :σ => (5.670)*10^(-8), #Stefanboltzman constante
     :S => 1368.0,    #Solar impact (energy from sun)
