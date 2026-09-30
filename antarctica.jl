@@ -16,7 +16,7 @@ function antarctica(u,p,t)
     β_b = growth_b(T, p.T_opt, p.k) #Defining our growth
     λ_b = loss_b(T, p.T_opt, p.k, p.λ_bopt) #Defining our loss
     
-    dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4 
+    dT = ((p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4)/p.C 
    # db = growth_opt(b, T, p.T_opt, p.k, g, p.λ_b)
     db = b * (β_b - λ_b)
 #    dI = differential_ice(I, T, g, p.DFF, p.p_snow)
