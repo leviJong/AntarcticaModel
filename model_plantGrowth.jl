@@ -6,7 +6,7 @@ growth_function = 1 #0 is optimal temperature growth, 1 is logistic
 p = Dict(
     :T => 270.0,
     :T_opt => 273.0,
-    :λ => 0.2,
+    :λ_bopt => 0.2,
     :k => 20.0,     
     :r => 1.0
 )
@@ -18,9 +18,9 @@ function plant(u,p,t)
     g = 1 - b
     
     if growth_function == 0
-        db = growth_opt(b, p.T, p.T_opt, p.k, g, p.λ) 
+        db = growth_opt(b, p.T, p.T_opt, p.k, g, λ) 
     elseif growth_function == 1
-        db = growth_log(b, g, p.r, p.λ)
+        db = growth_log(b, g, p.r, λ)
     end
 
     return SVector(db)
@@ -38,14 +38,14 @@ function growth_opt(b, T, T_opt, k, g) # Growth function for plants
     return(db)
 end
 
-function loss_plant(T, T_opt, k)
-    if k > abs(T - T_opt)
-        λ_b = -1+(k^-2)*(T-T_opt)^2
+function loss_b(T, T_opt, k, λ_bopt) # loss function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
+        return(λ_bopt+(1-λ_bopt)*(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
     else
-        λ_b = 1
+        return(1)
     end
-    return(λ_b)
 end
+
 
 function growth_log(b, g, r, λ)
     db = b*r*(1 - (b/g)) - λ*b
