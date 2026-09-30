@@ -10,7 +10,7 @@ function antarctica(u,p,t)
     p = NamedTuple(p) # Whenever p.n is called, n is defined in the Dict
     
     I = 0.5 #Change this to be based on L
-    g = 1 - I # Vacant space
+    g = 1 - I - b # Vacant space
 
     α_tot = p.α_b * b * g + p.α_I * I + p.α_g * g #Total albedo is the albedo added up
     ϵ = p.E + b * p.ϕ  # Emmisivity
