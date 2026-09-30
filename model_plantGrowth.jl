@@ -41,7 +41,7 @@ end
 
 function loss_b(T, T_opt, k, λ_bopt) # Loss function for plants
     if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
-        return(λ_bopt + (1 - λ_bopt) * (k^-2) * (T - T_opt)^2) #???
+        return(λ_bopt + (1 - λ_bopt) * (k^-2) * (T - T_opt)^2) #zie functie growth_b maar draai het om en doe plus λ_bopt
     else
         return(1)
     end
