@@ -22,6 +22,13 @@ function plant(u,p,t)
     return SVector(db)
 end
 
+function change_plant(b, T, g, T_opt, k, λ_opt)
+    β_b = growth_b(T, T_opt, k)
+    λ_b = loss_b(T, T_opt, k, λ_opt)
+
+    db = b * g * (β_b - λ_b)
+    return(db)
+end
 
 function growth_b(T, T_opt, k) # Growth function for plants
     if k > abs(T - T_opt) #If temperature is outside deviation, then growth=0
