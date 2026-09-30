@@ -27,7 +27,7 @@ end
 
 function growth_b(T, T_opt, k) # Growth function for plants
     if k > abs(T - T_opt) #If temperature is outside deviation, then growth=0
-        return((k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
+        return(1-(k^-2)*(T-T_opt)^2) #Ask Dylaan how this works
     else
         return(0)
     end
