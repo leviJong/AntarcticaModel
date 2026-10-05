@@ -67,25 +67,24 @@
 
 
 \section{2 Original equetions} %Creates a section
-
-
-\begin{itemize}
-\item
-  Leg uit welke dingen we ebben gebruikt
-\end{itemize}
+%hier word tekst in gestopt
+The Antarctica model is comprised of multiple other models such as the daisy world model and the tidewater glacier model. These models where then modified such that they were judged to be sufficiently simplified and work together smoothly.
 
 \subsection{2.1 Daisy formules} %creates a subsection
 
+It started with the Daisy world model to describe the growth of the flowers in Antarctica.
+
 \[\frac{dV_{b}}{dt} = V_{b}\left( V_{g}\beta\left( T_{b} \right) - \gamma \right)\] %growth of plants with constant death
 
-\[\beta\left( T_{b} \right) = \begin{cases} 1 - k\left( T_{b} - T_{opt} \right)^{2} & \left| T_{b} - T_{opt} \right| < k^{- \frac{1}{2}} \\ 0 & \text{otherwise} \end{cases}\] %the Growth function
+This is the equetion wich describes the change in the amount of plants dependent on temperature. It assumse the death rate is constant and the growthrate changes based on temperature.
+
+\[\beta\left( T_{b} \right) = \begin{cases} 1 - k\left( T_{b} - T_{opt} \right)^{2} & \text{if } \left| T_{b} - T_{opt} \right| < k \\ 0 & \text{otherwise} \end{cases}\] %the Growth function
+
+This describes the birthrate based of of temperature as a fraction between 0 and one. With $T_{opt}$ as the optimum themperature and $k$ as the maximum deviation from the optimum temperature. 
 
 \[A = \alpha_{b}V_{b} + \alpha_{I}V_{I} + \alpha_{g}V_{g}\] %total albedo
 
-\[T_{b}^{4} = q\left( A - \alpha_{b} \right) + T^{4}\] %specifiek temperatuur op dingel
-
-\[SL(1 - A) = \sigma T^{4}\] % energie
-
+This describes the total albedo across the daisy world planet based of the two types of daisys and the ground
 
 \subsection{2.2 Tidewater glacier model} % creates a subsection % ik kan niks over het glacier model vertellen
 
