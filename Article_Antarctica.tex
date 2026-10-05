@@ -45,57 +45,49 @@
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\author{}
-\date{}
+  \author{Dylaan Broos, Lock Salah, Wende van Hemert and Levi de Jong} %uthor
+\date{November 26} %date of publication
 
-\begin{document}
+\title{Artikel Titel Hier} %title
+\begin{document} %artikel start
+\maketitle %prints the title, authors and date
 
-Titel
+\section{abstract} %creates a section
 
-abstract
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  Inleiding
-\end{enumerate}
-
-\begin{itemize}
+\begin{itemize} %begins the itemization using dots
 \item
   Waarom dit artikel
 \item
   Geschiedenis onderwerp
 \item
   Gevolgen onderwerp
-\end{itemize}
+\end{itemize} %ends itemization
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\item
-  Original equetions
-\end{enumerate}
+
+\section{2 Original equetions} %Creates a section
+
 
 \begin{itemize}
 \item
   Leg uit welke dingen we ebben gebruikt
 \end{itemize}
 
-2.1 Daisy formules
+\subsection{2.1 Daisy formules} %creates a subsection
 
-\[\frac{dV_{b}}{dt} = V_{b}\left( V_{g}\beta\left( T_{b} \right) - \gamma \right)\]
+\[\frac{dV_{b}}{dt} = V_{b}\left( V_{g}\beta\left( T_{b} \right) - \gamma \right)\] %growth of plants with constant death
 
-\[\beta\left( T_{b} \right)├_{0\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, otherwise}^{1 - k\left( T_{b} - T_{opt} \right)^{2}\,\,\left| T_{b} - T_{opt} \right| < k^{- \frac{1}{2}}}\]
+\[\beta\left( T_{b} \right) = \begin{cases} 1 - k\left( T_{b} - T_{opt} \right)^{2} & \left| T_{b} - T_{opt} \right| < k^{- \frac{1}{2}} \\ 0 & \text{otherwise} \end{cases}\] %the Growth function
 
-\[A = \alpha_{b}V_{b} + \alpha_{I}V_{I} + \alpha_{g}V_{g}\]
+\[A = \alpha_{b}V_{b} + \alpha_{I}V_{I} + \alpha_{g}V_{g}\] %total albedo
 
-\[T_{b}^{4} = q\left( A - \alpha_{b} \right) + T^{4}\]
+\[T_{b}^{4} = q\left( A - \alpha_{b} \right) + T^{4}\] %specifiek temperatuur op dingel
 
-\[SL(1 - A) = \sigma T^{4}\]
+\[SL(1 - A) = \sigma T^{4}\] % energie
 
-Tidewater glacier model
 
-\[H_{m} = \alpha_{m}L^{\frac{1}{2}}\]
+\subsection{2.2 Tidewater glacier model} % creates a subsection % ik kan niks over het glacier model vertellen
+
+\[H_{m} = \alpha_{m}L^{\frac{1}{2}}\] 
 
 \[H_{i} = \max\left\{ \alpha_{i}L^{\frac{1}{2}}; - \epsilon\delta d \right\}\]
 
@@ -111,18 +103,18 @@ Tidewater glacier model
 
 \[E = E_{0} + A_{E}\sin\left( \frac{2\pi t}{P_{E}} \right)\]
 
-2.3 general formulas
+\subsection{2.3 general formulas} %creates a subsection % algemene shit
 
 \[C\frac{dT}{dt} = \frac{S_{0}}{4}(1 - \alpha) - \epsilon\sigma T^{4}\]
 
-Antarctica model
+\section{3 Antarctica model}
 
 \begin{itemize}
 \item
   Ons vervloekte model uitleggen
 \end{itemize}
 
-Analysis
+\section{4 Analysis} %creates a section
 
 \begin{itemize}
 \item
@@ -135,7 +127,7 @@ Analysis
   Berekening afweikingen van werkelijkheid
 \end{itemize}
 
-Conclusion/discussion
+\section{5 Conclusion/discussion} %creates a section
 
 \begin{itemize}
 \item
@@ -148,4 +140,4 @@ Conclusion/discussion
   Wat kan extra in een vervolg onderzoek
 \end{itemize}
 
-\end{document}
+\end{document} %ends the document
