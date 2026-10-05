@@ -11,8 +11,8 @@ function antarctica(u,p,t)
 
     p = NamedTuple(p) # Whenever p.n is called, n is defined in the Dict
     
-    I = 0.5 #Change this to be based on L
-    g = 1 - b - I # Vacant space
+    I = ice_cover(L) #Change this to be based on L
+    g = max(1 - b - I, 0) # Vacant space
 
     α_tot = p.α_b * b * g + p.α_I * I + p.α_g * g #Total albedo is the albedo added up
     ϵ = p.E + b * p.ϕ  # Emmisivity
@@ -26,7 +26,7 @@ function antarctica(u,p,t)
 end
 
 p = Dict(
-    :σ => (5.670)*10^(-8), #Stefanboltzman constante
+    :σ => 5.670e-8, #Stefanboltzman constante
     :S => 1368.0,    #Solar impact (energy from sun)
     
     #Constants we can tweak
@@ -35,12 +35,12 @@ p = Dict(
     :α_g => 0.1,   # Albedo of the ground
     :λ_bopt => 0.05,     # Loss rate of plants
     :E => 0.75,     # Default emmisivity of the atmosphere, without plants
-    :ϕ => 0.028,    # Effectivity of the plants on emmisivity 
+    :ϕ => 2.8e-2,    # Effectivity of the plants on emmisivity 
     :k => 32.5,      # Survivavable deviation in temperature wherein plants can still reproduce 
     :T_opt => 265.65, # Optimal temperature for plant reproducition
 
     #Timescales 
-    :τ_T => 1.0e-4, # Temperature
+    :τ_T => 1.0e-3, # Temperature
     :τ_L => 1.0e-1, # Glacier
     :τ_b => 1.0 # plants
     )
@@ -50,7 +50,7 @@ print(p)
 
 diffeq = (; alg = Vern9(), dt=1e-4)
 
-u0 = [263.0, 0.3, 1.0e4] #Starting value of T, b, L
+u0 = [263.0, 0.3, 1.0e3] #Starting value of T, b, L
 t0 = 0.0 #Starting time
 ds = CoupledODEs(antarctica, u0, p; diffeq) #Runs the function over time
 
@@ -68,14 +68,18 @@ X_columns = columns(X) #X is a matrix of results, columns seperates these
 #println(X_columns[1])
 
 
-fig = Figure(size=(1400,400))
+fig = Figure(size=(1400,800))
 
 ax_temp = Axis(fig[1, 1]; xlabel = "time", ylabel = "temperature") 
 ax_plant = Axis(fig[1,2]; xlabel = "time", ylabel = "plant cover")
-ax_ice = Axis(fig[1,3]; xlabel = "time", ylabel = "L")
+ax_ice = Axis(fig[2,1]; xlabel = "time", ylabel = "L")
+
+ax_I = Axis(fig[1,2]; xlabel = "time", ylabel = "I")
 
 lines!(ax_temp, t, X_columns[1], color = :tomato)
 lines!(ax_plant, t, X_columns[2], color = :green)
 lines!(ax_ice, t, X_columns[3], color = :blue)
+
+lines!(ax_I, t, ice_cover.(X_columns[3]), color = :blue)
 
 fig

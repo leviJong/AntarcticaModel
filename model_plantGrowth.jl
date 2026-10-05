@@ -9,24 +9,11 @@ p = Dict(
     :I => 0.3 # Ice cover of ground
 )
 
-function plant(u,p,t)
-    b = u[1]
-    p = NamedTuple(p)
-    
-    g = 1 - b - p.I
-    
-    λ_b = loss_b(p.T, p.T_opt, p.k, p.λ_opt)
-    β_b = growth_b(p.T, p.T_opt, p.k)
-    db = b * g * (β_b - λ_b)
-    
-    return SVector(db)
-end
-
 function change_plant(b, T, g, T_opt, k, λ_opt)
     β_b = growth_b(T, T_opt, k)
     λ_b = loss_b(T, T_opt, k, λ_opt)
 
-    db = b * g * (β_b - λ_b)
+    db = b * (g * β_b - λ_b)
     return(db)
 end
 

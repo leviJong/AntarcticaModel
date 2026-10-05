@@ -19,14 +19,45 @@ p_i = Dict(
     :k => 2.0
 )
 
+ice_values = []
+n = 0
 
-
+"""
 function ice(u,p,t)
     T = p
     L = u[1]
 
+    print(t)
+    print(" . ")
+
+    global n
+    n += 1
+    
+    print(n)
+    print(" :: ")
+
+    print(L)
+    print(" : ")
+
+    I = ice_cover(L)
+    append!(ice_values, I)
+    
+    print(I)
+    print(" / ")
+    println(ice_values[n])
+
     dL = change_ice(L, T)
     return SVector(dL)
+end"""
+
+function ice_cover(L)
+    if L > x_c 
+        I = 1
+    else
+        I = L / x_c
+    end
+    
+    return(I)
 end
 
 function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 2.5e2, σ = 1.0e4)
@@ -67,6 +98,9 @@ function change_ice(L, T)
    return(dL) 
 end
 
+x_values = 0:1:8e4
+x_c = findfirst(ground_depth.(x_values, 240) .< 0)
+
 diffeq = (; alg = Vern9(), dt=1e-2)
 
 u0 = [1.0e4]
@@ -83,10 +117,12 @@ X_columns = columns(X)
 fig = Figure()
 ax = Axis(fig[1, 1]; xlabel = "time", ylabel = "L")
 ax2 = Axis(fig[1, 2]; xlabel = "x", ylabel = "d")
+ax3 = Axis(fig[2,1]; xlabel = "time", ylabel = "ice cover")
 
 lines!(ax, t, X_columns[1])
-
-x_values = 0:1:8e4
 lines!(ax2, x_values, ground_depth.(x_values, 200.0))
+#lines!(ax3, t, ice_values)
+println(length(ice_values))
+println(length(X_columns[1]))
 
 fig
