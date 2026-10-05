@@ -29,13 +29,20 @@ function ice(u,p,t)
     return SVector(dL)
 end
 
-function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 5.0e3, σ = 1.2e4)
-    d = d_0 - s* x^2 + λ * exp(-(((x - x_s) / σ) ^2) )
+function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 2.5e2, σ = 1.0e4)
+    d = d0 - s * (x)^2 + λ * exp(-( ((x - x_s) / σ) ^2 ) )
+    #d = -1.0
     return(d)
 end
 
+"""
+function ground_depth_lock(x, d0; x_s = 40000.0, s = 0.014, λ = 300.0, σ = 10000.0)
+    d = d0 - s*x + λ * ℯ^-((x-x_s)/σ)^2
+    return(d)
+end"""
+
 function change_ice(L, T)
-   if L == 0.0
+   if L <= 0.0
         dL = 0.0
    else   
         p = NamedTuple(p_i)
@@ -67,7 +74,7 @@ t0 = 0.0
 p = 2003.0
 ds = CoupledODEs(ice, u0, p; diffeq)
 
-t_total = 10000.0
+t_total = 1.0e4
 dt = 1.0
 X, t = trajectory(ds, t_total; Δt=dt)
 
@@ -79,7 +86,7 @@ ax2 = Axis(fig[1, 2]; xlabel = "x", ylabel = "d")
 
 lines!(ax, t, X_columns[1])
 
-x_values = 0:1:5e4
+x_values = 0:1:8e4
 lines!(ax2, x_values, ground_depth.(x_values, 200.0))
 
 fig

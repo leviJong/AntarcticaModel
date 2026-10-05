@@ -40,8 +40,8 @@ p = Dict(
     :T_opt => 265.65, # Optimal temperature for plant reproducition
 
     #Timescales 
-    :τ_T => 1.0e-3, # Temperature
-    :τ_L => 1.0, # Glacier
+    :τ_T => 1.0e-4, # Temperature
+    :τ_L => 1.0e-1, # Glacier
     :τ_b => 1.0 # plants
     )
  
@@ -54,7 +54,7 @@ u0 = [263.0, 0.3, 1.0e4] #Starting value of T, b, L
 t0 = 0.0 #Starting time
 ds = CoupledODEs(antarctica, u0, p; diffeq) #Runs the function over time
 
-t_total = 2000.0
+t_total = 2.0e4
 dt = 1.0 
 #dt is how much you increment time each calculation, and t_total is when it stops
 X, t = trajectory(ds, t_total; Δt=dt)
