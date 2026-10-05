@@ -5,6 +5,7 @@
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{multicol}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -51,10 +52,14 @@
 \title{Artikel Titel Hier} %title
 \begin{document} %artikel start
 \maketitle %prints the title, authors and date
+\begin{multicols}{2}
+[
+\section{Abstract}
+Kaas
+]
+\section{Inleiding}
 
-\section{abstract} %creates a section
-
-\section{Introduction}
+a
 
 \begin{itemize} %begins the itemization using dots
 \item
@@ -65,6 +70,9 @@
   Gevolgen onderwerp
 \end{itemize} %ends itemization
 
+\section{2 Original equetions} %Creates a section
+%hier word tekst in gestopt
+The Antarctica model is comprised of multiple other models such as the daisy world model and the tidewater glacier model. These models where then modified such that they were judged to be sufficiently simplified and work together smoothly.
 
 \section{2 Original equetions} %Creates a section
 %hier word tekst in gestopt
@@ -140,5 +148,5 @@ A is the total albedo across the daisy world planet based on the two types of da
 \item
   Wat kan extra in een vervolg onderzoek
 \end{itemize}
-
+\end{multicols}
 \end{document} %ends the document
