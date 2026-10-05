@@ -2,6 +2,7 @@
 \PassOptionsToPackage{hyphens}{url}
 \documentclass[
 ]{article}
+\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
@@ -55,6 +56,11 @@
 
 \begin{titlepage}
 \maketitle  %prints the title, authors and date
+\begin{center} 
+Aspestos\par
+mayonaise\par
+enstein
+\end{center}
 \end{titlepage}
 
 \maketitle
@@ -75,6 +81,10 @@ a
 \item
   Gevolgen onderwerp
 \end{itemize} %ends itemization
+
+\section{2 Original equetions} %Creates a section
+%hier word tekst in gestopt
+The Antarctica model is comprised of multiple other models such as the daisy world model and the tidewater glacier model. These models where then modified such that they were judged to be sufficiently simplified and work together smoothly.
 
 \section{2 Original equetions} %Creates a section
 %hier word tekst in gestopt
@@ -115,8 +125,15 @@ A is the total albedo across the daisy world planet based on the two types of da
 \[E = E_{0} + A_{E}\sin\left( \frac{2\pi t}{P_{E}} \right)\]
 
 \subsection{2.3 general formulas} %creates a subsection % algemene shit
+There are two functions that were used which don't come from a unique model.
 
+The temperature function:
 \[C\frac{dT}{dt} = \frac{S_{0}}{4}(1 - \alpha) - \epsilon\sigma T^{4}\]
+Which calculates the temperature change based on albedo and emissivity. with $\epsilon$ being emissivity and $\alpha$ being albedo and $S_{0}$ being the solar impact.
+
+The Emissivity function:
+\[\frac{dE}{dt} = a - \phi Eb\] %emissivity
+this calculates function calculates a inverted version of the emissivity. Where $\phi$ is the amount of greenhouse gases being absorbed by plants and $a$ is the amount of greenhouse gases being produced by an unkown source.
 
 \section{3 Antarctica model}
 
