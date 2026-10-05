@@ -21,7 +21,7 @@ function antarctica(u,p,t)
     dL = change_ice(L, T) 
     #These are the differential equations
 
-    return SVector(dT * p.τ_T, db * p.τ_b, dL * p.τ_L, dE)
+    return SVector(dT * p.τ_T, db * p.τ_b, dL * p.τ_L, dE * p.τ_E)
 end
 
 p = Dict(
@@ -41,8 +41,9 @@ p = Dict(
 
     #Timescales 
     :τ_T => 1.0e-3, # Temperature
-    :τ_L => 1.0, # Glacier
-    :τ_b => 1.0 # plants
+    :τ_L => 1.0e-1, # Glacier
+    :τ_b => 1.0, # plants
+    :τ_E => 2.0e-2
     )
  
    
@@ -54,7 +55,7 @@ u0 = [263.0, 0.3, 1.0e4, 0.05] #Starting value of T, b, L, E
 t0 = 0.0 #Starting time
 ds = CoupledODEs(antarctica, u0, p; diffeq) #Runs the function over time
 
-t_total = 2000.0
+t_total = 20000.0
 dt = 1.0 
 #dt is how much you increment time each calculation, and t_total is when it stops
 X, t = trajectory(ds, t_total; Δt=dt)
@@ -68,7 +69,7 @@ X_columns = columns(X) #X is a matrix of results, columns seperates these
 #println(X_columns[1])
 
 
-fig = Figure(size=(1400,400))
+fig = Figure(size=(1400,1000))
 
 ax_temp = Axis(fig[1, 1]; xlabel = "time", ylabel = "temperature") 
 ax_plant = Axis(fig[1,2]; xlabel = "time", ylabel = "plant cover")
