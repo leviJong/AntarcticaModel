@@ -29,10 +29,8 @@ function ice(u,p,t)
     return SVector(dL)
 end
 
-function ground_depth(x, d0; x_s = 40000.0, s = 0.014, λ = 300.0, σ = 10000.0)
-    d = d0 - s*x + λ * ℯ^-((x-x_s)/σ)^2
-    #d = d0
-
+function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 5.0e3, σ = 1.2e4)
+    d = d_0 - s* x^2 + λ * exp(-(((x - x_s) / σ) ^2) )
     return(d)
 end
 
