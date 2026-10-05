@@ -1,9 +1,9 @@
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
-\documentclass[
-]{article}
+\documentclass[]{article}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
+\usepackage(multicol)
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
@@ -49,22 +49,24 @@
 \date{November 26} %date of publication
 
 \title{Artikel Titel Hier} %title
+\maketitle
+
 \begin{document} %artikel start
-\maketitle %prints the title, authors and date
 
 \section{abstract} %creates a section
 
+\begin{multicols}{2}
+[
 \section{Inleiding}
 
 \begin{itemize} %begins the itemization using dots
-\item
-  Waarom dit artikel
-\item
-  Geschiedenis onderwerp
-\item
-  Gevolgen onderwerp
+  \item
+    Waarom dit artikel
+  \item
+    Geschiedenis onderwerp
+  \item
+    Gevolgen onderwerp
 \end{itemize} %ends itemization
-
 
 \section{2 Original equetions} %Creates a section
 %hier word tekst in gestopt
@@ -111,34 +113,34 @@ This describes the total albedo across the daisy world planet based of the two t
 \section{3 Antarctica model}
 
 \begin{itemize}
-\item
-  Ons vervloekte model uitleggen
+  \item
+    Ons vervloekte model uitleggen
 \end{itemize}
 
 \section{4 Analysis} %creates a section
 
 \begin{itemize}
-\item
-  Weergave resultaten
-\item
-  Uitleg resultaten
-\item
-  Verwerking resultaten
-\item
-  Berekening afweikingen van werkelijkheid
+  \item
+    Weergave resultaten
+  \item
+    Uitleg resultaten
+  \item
+    Verwerking resultaten
+  \item
+    Berekening afweikingen van werkelijkheid
 \end{itemize}
 
 \section{5 Conclusion/discussion} %creates a section
 
 \begin{itemize}
-\item
-  Conclusie
-\item
-  Wat ging mis in ons studie, en hoe verbeteren we dat.
-\item
-  Wat kan meegenomen worden in een vervolg onderzoek
-\item
-  Wat kan extra in een vervolg onderzoek
+  \item
+    Conclusie
+  \item
+    Wat ging mis in ons studie, en hoe verbeteren we dat.
+  \item
+    Wat kan meegenomen worden in een vervolg onderzoek
+  \item
+    Wat kan extra in een vervolg onderzoek
 \end{itemize}
-
+]
 \end{document} %ends the document
