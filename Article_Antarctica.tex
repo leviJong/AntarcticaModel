@@ -1,9 +1,9 @@
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
-\documentclass[]{article}
+\documentclass[
+]{article}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
-\usepackage{multicol}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
@@ -49,44 +49,42 @@
 \date{November 26} %date of publication
 
 \title{Artikel Titel Hier} %title
-\maketitle
-
 \begin{document} %artikel start
+\maketitle %prints the title, authors and date
 
 \section{abstract} %creates a section
 
-\begin{multicols}{2}
-[
-\section{Inleiding}
+\section{Introduction}
 
 \begin{itemize} %begins the itemization using dots
-  \item
-    Waarom dit artikel
-  \item
-    Geschiedenis onderwerp
-  \item
-    Gevolgen onderwerp
+\item
+  Waarom dit artikel
+\item
+  Geschiedenis onderwerp
+\item
+  Gevolgen onderwerp
 \end{itemize} %ends itemization
+
 
 \section{2 Original equetions} %Creates a section
 %hier word tekst in gestopt
-The Antarctica model is comprised of multiple other models such as the daisy world model and the tidewater glacier model. These models where then modified such that they were judged to be sufficiently simplified and work together smoothly.
+The Antarctica model is comprised of multiple other models such as the daisy world model and the tidewater glacier model. These models were then sufficiently simplified and made to work together smoothly.
 
-\subsection{2.1 Daisy formules} %creates a subsection
+\subsection{2.1 Daisy formulas} %creates a subsection
 
 It started with the Daisy world model to describe the growth of the flowers in Antarctica.
 
 \[\frac{dV_{b}}{dt} = V_{b}\left( V_{g}\beta\left( T_{b} \right) - \gamma \right)\] %growth of plants with constant death
 
-This is the equetion wich describes the change in the amount of plants dependent on temperature. It assumse the death rate is constant and the growthrate changes based on temperature.
+This is the equation that describes the change in the number of plants depending on the temperature. It assumes that the death rate is constant and that the growth rate changes based on temperature.
 
 \[\beta\left( T_{b} \right) = \begin{cases} 1 - k\left( T_{b} - T_{opt} \right)^{2} & \text{if } \left| T_{b} - T_{opt} \right| < k \\ 0 & \text{otherwise} \end{cases}\] %the Growth function
 
-This describes the birthrate based of of temperature as a fraction between 0 and one. With $T_{opt}$ as the optimum themperature and $k$ as the maximum deviation from the optimum temperature. 
+This describes the birthrate, based on the temperature, as a fraction between zero and one. With $T_{opt}$ as the optimum temperature and $k$ as the maximum deviation from the optimum temperature. 
 
 \[A = \alpha_{b}V_{b} + \alpha_{I}V_{I} + \alpha_{g}V_{g}\] %total albedo
 
-This describes the total albedo across the daisy world planet based of the two types of daisys and the ground
+A is the total albedo across the daisy world planet based on the two types of daisies and the ground.
 
 \subsection{2.2 Tidewater glacier model} % creates a subsection % ik kan niks over het glacier model vertellen
 
@@ -113,34 +111,34 @@ This describes the total albedo across the daisy world planet based of the two t
 \section{3 Antarctica model}
 
 \begin{itemize}
-  \item
-    Ons vervloekte model uitleggen
+\item
+  Ons vervloekte model uitleggen
 \end{itemize}
 
 \section{4 Analysis} %creates a section
 
 \begin{itemize}
-  \item
-    Weergave resultaten
-  \item
-    Uitleg resultaten
-  \item
-    Verwerking resultaten
-  \item
-    Berekening afweikingen van werkelijkheid
+\item
+  Weergave resultaten
+\item
+  Uitleg resultaten
+\item
+  Verwerking resultaten
+\item
+  Berekening afweikingen van werkelijkheid
 \end{itemize}
 
 \section{5 Conclusion/discussion} %creates a section
 
 \begin{itemize}
-  \item
-    Conclusie
-  \item
-    Wat ging mis in ons studie, en hoe verbeteren we dat.
-  \item
-    Wat kan meegenomen worden in een vervolg onderzoek
-  \item
-    Wat kan extra in een vervolg onderzoek
+\item
+  Conclusie
+\item
+  Wat ging mis in ons studie, en hoe verbeteren we dat.
+\item
+  Wat kan meegenomen worden in een vervolg onderzoek
+\item
+  Wat kan extra in een vervolg onderzoek
 \end{itemize}
-]
+
 \end{document} %ends the document
