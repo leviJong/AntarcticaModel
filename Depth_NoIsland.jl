@@ -1,13 +1,13 @@
-function d(x; s=0.00000012, x_s=75000, σ=12000, d_0=240, λ=500)
-    d=d_0-s*(x)^2 + λ * exp(-(((x-x_s)/σ)^2))
-    return(d)
+function d(x; s=0.00000012, x_s=75000, σ=10000, d_0=200, λ=250) 
+    d = d_0-s*(x*40827)^2 + λ * exp(-(((x*40827-x_s)/σ)^2))
+    return d
 end
 
 using CairoMakie
 
 f = Figure()
-ax = Axis(f[1,1])
-x_values = 0:1:100000
+ax = Axis(f[1,1]; xlabel = "x", ylabel = "depth")
+x_values = 0:0.001:2.5
 lines!(ax, x_values, d.(x_values))
-ylims!(-2000,500)
+ylims!(-1500,500)
 f
