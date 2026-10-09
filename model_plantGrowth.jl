@@ -6,14 +6,13 @@ p = Dict(
     :T_opt => 265.65, # Optimal Temperature for plant growth
     :λ_opt => 0.05, # Loss by optimal temperature
     :k => 32.5, 
-    :I => 0.3 # Ice cover of ground
 )
 
 function change_plant(b, T, g, T_opt, k, λ_opt)
     β_b = growth_b(T, T_opt, k)
     λ_b = loss_b(T, T_opt, k, λ_opt)
 
-    db = b * (g * β_b - λ_b)
+    db = (b + 0.01) * (g * β_b)  - λ_b * b
     return(db)
 end
 
@@ -34,9 +33,10 @@ function loss_b(T, T_opt, k, λ_bopt) # Loss function for plants
     end
 end
 
+"""
 u0 = [0.4]
 t0 = 0.0
-ds = CoupledODEs(plant, u0, p)
+ds = CoupledODEs(change_plant, u0, p)
 
 t_total = 100.0
 dt = 1.0
@@ -48,4 +48,4 @@ fig = Figure()
 ax = Axis(fig[1, 1]; xlabel = "time", ylabel = "plant cover")
 lines!(ax, t, X_columns[1])
 
-fig
+fig"""

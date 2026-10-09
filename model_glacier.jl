@@ -1,6 +1,7 @@
 using DynamicalSystemsBase
 using CairoMakie
-using OrdinaryDiffEq: Vern9
+using OrdinaryDiffEq: Tsit5
+
 
 p_i = Dict(
 
@@ -19,36 +20,13 @@ p_i = Dict(
     :k => 2.0
 )
 
-ice_values = []
-n = 0
-
-"""
 function ice(u,p,t)
     T = p
     L = u[1]
-
-    print(t)
-    print(" . ")
-
-    global n
-    n += 1
     
-    print(n)
-    print(" :: ")
-
-    print(L)
-    print(" : ")
-
-    I = ice_cover(L)
-    append!(ice_values, I)
-    
-    print(I)
-    print(" / ")
-    println(ice_values[n])
-
     dL = change_ice(L, T)
     return SVector(dL)
-end"""
+end
 
 function ice_cover(L)
     if L > x_c 
@@ -65,6 +43,9 @@ function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 2.5e2, σ = 1.0e4)
     #d = -1.0
     return(d)
 end
+
+x_values = 0:1:8e4
+x_c = findfirst(ground_depth.(x_values, 240) .< 0)
 
 """
 function ground_depth_lock(x, d0; x_s = 40000.0, s = 0.014, λ = 300.0, σ = 10000.0)
@@ -85,7 +66,7 @@ function change_ice(L, T)
 
                 h_m = (p.d0 + d + H_m + H_f) / 2
 
-            E = p.E0 #- p.k * (T - p.T0)
+            E = p.E0 + p.k * (T - p.T0)
 
 
         F = min(0, p.c * d * H_f) 
@@ -97,32 +78,47 @@ function change_ice(L, T)
 
    return(dL) 
 end
+""""
 
-x_values = 0:1:8e4
-x_c = findfirst(ground_depth.(x_values, 240) .< 0)
+diffeq = (; alg = Tsit5(), abstol=1e-12, reltol=1e-12)
 
-diffeq = (; alg = Vern9(), dt=1e-2)
-
-u0 = [1.0e4]
+u0 = [1.0]
 t0 = 0.0
 p = 2003.0
 ds = CoupledODEs(ice, u0, p; diffeq)
 
-t_total = 1.0e4
+grid = (
+    range(0, 1.0e5; step=5000), # Starting values of L
+)
+println(range(1, 5; step =1))
+
+bmap = BasinMapRecurrences(
+    ds, grid;
+    consecutive_recurrences = 100, attractor_locate_steps = 100,
+    consecutive_lost_steps = 100, horizon_limit = 1e7,
+    sparse = false,
+)
+
+basin, attractors = basins_of_attraction(bmap)
+println(attractors)
+println(attractors[1][1])
+println(attractors[2][1])
+
+t_total = 1.0e5
 dt = 1.0
-X, t = trajectory(ds, t_total; Δt=dt)
+X, t = trajectory(ds, t_total, u0; Δt=dt)
 
 X_columns = columns(X)
 
 fig = Figure()
 ax = Axis(fig[1, 1]; xlabel = "time", ylabel = "L")
-ax2 = Axis(fig[1, 2]; xlabel = "x", ylabel = "d")
-ax3 = Axis(fig[2,1]; xlabel = "time", ylabel = "ice cover")
+#ax2 = Axis(fig[1, 2]; xlabel = "x", ylabel = "d")
+#ax3 = Axis(fig[2,1]; xlabel = "time", ylabel = "ice cover")
 
 lines!(ax, t, X_columns[1])
-lines!(ax2, x_values, ground_depth.(x_values, 200.0))
+#lines!(ax2, x_values, ground_depth.(x_values, 200.0))
 #lines!(ax3, t, ice_values)
-println(length(ice_values))
-println(length(X_columns[1]))
+#println(length(ice_values))
+#println(length(X_columns[1]))
 
-fig
+fig"""
