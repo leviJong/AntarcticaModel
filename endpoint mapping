@@ -1,0 +1,75 @@
+
+
+# ==========================================
+# ENDPOINT MAP FOR ONE EMISSIVITY
+# ==========================================
+
+E_fixed = 0.75
+t_final = 1.5e4
+
+# Use a smaller grid for the first test
+T_range = range(164.0, 350.0; length = 10)
+b_range = range(0.01, 0.99; length = 10)
+L_range = range(1.0e3, 1.0e5; length = 10)
+
+# Copy parameters and set emissivity
+p_fixed = copy(p)
+p_fixed[:E] = E_fixed
+
+# Store final positions
+T_endpoints = Float64[]
+b_endpoints = Float64[]
+I_endpoints = Float64[]
+
+# Run all starting conditions
+for T0 in T_range, b0 in b_range, L0 in L_range
+
+    u0 = [T0, b0, L0]
+
+    try
+        ds = CoupledODEs(
+            antarctica,
+            u0,
+            p_fixed;
+            diffeq
+        )
+
+        X, t = trajectory(ds, t_final; Δt = t_final)
+        Xc = columns(X)
+
+        Tf = Xc[1][end]
+        bf = Xc[2][end]
+        Lf = Xc[3][end]
+        If = ice_cover(Lf)
+
+        if all(isfinite, [Tf, bf, Lf, If])
+            push!(T_endpoints, Tf)
+            push!(b_endpoints, bf)
+            push!(I_endpoints, If)
+        end
+
+    catch err
+        println("Failed start: T=$T0, b=$b0, L=$L0")
+    end
+end
+
+# Plot only the final positions
+fig = Figure(size = (1000, 800))
+ax = Axis3(
+    fig[1, 1],
+    xlabel = "Temperature T",
+    ylabel = "Plant cover b",
+    zlabel = "Ice cover I",
+    title = "Endpoint map at E = $E_fixed"
+)
+
+scatter!(
+    ax,
+    T_endpoints,
+    b_endpoints,
+    I_endpoints;
+    markersize = 5
+)
+
+fig
+
