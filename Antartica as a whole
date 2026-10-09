@@ -1,0 +1,153 @@
+#-------------------------------------------------------------------------------------------------
+# Antartica
+#------------------------------------------------------------------------------------------------
+using DynamicalSystemsBase
+using CairoMakie
+using Attractors
+using OrdinaryDiffEq: Tsit5
+
+function antarctica(u,p,t)
+    T,b,L = u
+
+    p = NamedTuple(p) # Whenever p.n is called, n is defined in the Dict
+    
+    I = ice_cover(L) #Change this to be based on L
+    g = max(1 - b - I, 0) # Vacant space
+
+    α_tot = p.α_b * b * g + p.α_I * I + p.α_g * g #Total albedo is the albedo added up
+    ϵ = p.E + b * p.ϕ  # Emmisivity
+        
+    dT = (p.S / 4 ) * (1 - α_tot) - ϵ * p.σ * T^4  
+    db = change_plant(b, T, g, p.T_opt, p.k, p.λ_bopt)
+    dL = change_ice(L, T) 
+    #These are the differential equations
+
+    return SVector(dT * p.τ_T, db * p.τ_b, dL * p.τ_L)
+end
+x_c = 7.5e4
+function ice_cover(L)
+    if L > x_c 
+        I = 1
+    else
+        I = L / x_c
+    end
+    
+    return(I)
+end
+function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 2.5e2, σ = 1.0e4)
+    d = d0 - s * (x)^2 + λ * exp(-( ((x - x_s) / σ) ^2 ) )
+    #d = -1.0
+    return(d)
+end
+function change_ice(L, T)
+   if L <= 0.0
+        dL = 0.0
+   else   
+        p = NamedTuple(p_i)
+
+        d = ground_depth(L, p.d0) 
+
+                H_f = max(p.α_f * L^(1/2), -p.ϵ * p.δ * d)
+                H_m = p.α_m * L^(1/2)
+
+                h_m = (p.d0 + d + H_m + H_f) / 2
+
+            E = p.E0 + p.k * (T - p.T0)
+
+
+        F = min(0, p.c * d * H_f) 
+
+        B = p.β * (h_m - E) * L
+
+        dL = L^(-1/2) * 2 * (B + F) / (3 * p.α_m)
+   end
+
+   return(dL) 
+end
+function change_plant(b, T, g, T_opt, k, λ_opt)
+    β_b = growth_b(T, T_opt, k)
+    λ_b = loss_b(T, T_opt, k, λ_opt)
+
+    db = b * (g * β_b - λ_b)
+    return(db)
+end
+function growth_b(T, T_opt, k) # Growth function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then growth=0
+        return(1 - (k^-2) * (T - T_opt)^2) #Ask Dylaan how this works
+    else
+        return(0)
+    end
+end
+function loss_b(T, T_opt, k, λ_bopt) # Loss function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
+        return(λ_bopt + (1 - λ_bopt) * (k^-2) * (T - T_opt)^2) #zie functie growth_b maar draai het om en doe plus λ_bopt
+    else
+        return(1)
+    end
+end
+p_i = Dict(
+
+    :d0 => 200.0, #Starting height by L = 0
+
+    :α_f => 0.5,
+    :α_m => 2.0,
+
+    :ϵ => 1.0,
+    :δ => 1.127,
+    :c => 2.4,
+    :β => 0.005,
+
+    :E0 => 100.0,
+    :T0 => 265.0,
+    :k => 2.0
+)
+p = Dict(
+    :σ => 5.670e-8, #Stefanboltzman constante
+    :S => 1368.0,    #Solar impact (energy from sun)
+    
+    #Constants we can tweak
+    :α_b => 0.4,   # Albedo (reflectivity) value of the plants
+    :α_I => 0.9,   # Albedo of the ice
+    :α_g => 0.1,   # Albedo of the ground
+    :λ_bopt => 0.05,     # Loss rate of plants
+    :E => 0.75,     # Default emmisivity of the atmosphere, without plants
+    :ϕ => 2.8e-2,    # Effectivity of the plants on emmisivity 
+    :k => 32.5,      # Survivavable deviation in temperature wherein plants can still reproduce 
+    :T_opt => 265.65, # Optimal temperature for plant reproducition
+
+    #Timescales 
+    :τ_T => 1.0e-3, # Temperature
+    :τ_L => 1.0e-1, # Glacier
+    :τ_b => 1.0 # plants
+    )
+
+diffeq = (; alg = Tsit5(), abstol=1e-10, reltol=1e-10)
+
+u0 = [263.0, 0.3, 1.0e3] #Starting value of T, b, L
+t0 = 0.0 #Starting time
+ds = CoupledODEs(antarctica, u0, p; diffeq) #Runs the function over time
+
+t_total = 1.5e4
+dt = 1.0 
+#dt is how much you increment time each calculation, and t_total is when it stops
+X, t = trajectory(ds, t_total; Δt=dt)
+
+X_columns = columns(X) #X is a matrix of results, columns seperates these
+#println(X_columns[1])
+
+
+fig = Figure(size=(1400,800))
+
+ax_temp = Axis(fig[1, 1]; xlabel = "time", ylabel = "temperature") 
+ax_plant = Axis(fig[1,2]; xlabel = "time", ylabel = "plant cover")
+ax_ice = Axis(fig[2,1]; xlabel = "time", ylabel = "L")
+
+ax_I = Axis(fig[1,2]; xlabel = "time", ylabel = "I")
+
+lines!(ax_temp, t, X_columns[1], color = :tomato)
+lines!(ax_plant, t, X_columns[2], color = :green)
+lines!(ax_ice, t, X_columns[3], color = :blue)
+
+lines!(ax_I, t, ice_cover.(X_columns[3]), color = :blue)
+
+fig
