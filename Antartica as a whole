@@ -1,10 +1,10 @@
+#-------------------------------------------------------------------------------------------------
+# Antartica
+#------------------------------------------------------------------------------------------------
 using DynamicalSystemsBase
 using CairoMakie
-using OrdinaryDiffEq: Vern9
-
-
-include("model_plantGrowth.jl") 
-include("model_glacier.jl")
+using Attractors
+using OrdinaryDiffEq: Tsit5
 
 function antarctica(u,p,t)
     T,b,L = u
@@ -24,7 +24,83 @@ function antarctica(u,p,t)
 
     return SVector(dT * p.τ_T, db * p.τ_b, dL * p.τ_L)
 end
+x_c = 7.5e4
+function ice_cover(L)
+    if L > x_c 
+        I = 1
+    else
+        I = L / x_c
+    end
+    
+    return(I)
+end
+function ground_depth(x, d0; x_s = 7.5e4, s = 1.2e-7, λ = 2.5e2, σ = 1.0e4)
+    d = d0 - s * (x)^2 + λ * exp(-( ((x - x_s) / σ) ^2 ) )
+    #d = -1.0
+    return(d)
+end
+function change_ice(L, T)
+   if L <= 0.0
+        dL = 0.0
+   else   
+        p = NamedTuple(p_i)
 
+        d = ground_depth(L, p.d0) 
+
+                H_f = max(p.α_f * L^(1/2), -p.ϵ * p.δ * d)
+                H_m = p.α_m * L^(1/2)
+
+                h_m = (p.d0 + d + H_m + H_f) / 2
+
+            E = p.E0 + p.k * (T - p.T0)
+
+
+        F = min(0, p.c * d * H_f) 
+
+        B = p.β * (h_m - E) * L
+
+        dL = L^(-1/2) * 2 * (B + F) / (3 * p.α_m)
+   end
+
+   return(dL) 
+end
+function change_plant(b, T, g, T_opt, k, λ_opt)
+    β_b = growth_b(T, T_opt, k)
+    λ_b = loss_b(T, T_opt, k, λ_opt)
+
+    db = b * (g * β_b - λ_b)
+    return(db)
+end
+function growth_b(T, T_opt, k) # Growth function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then growth=0
+        return(1 - (k^-2) * (T - T_opt)^2) #Ask Dylaan how this works
+    else
+        return(0)
+    end
+end
+function loss_b(T, T_opt, k, λ_bopt) # Loss function for plants
+    if k > abs(T - T_opt) #If temperature is outside deviation, then loss=1
+        return(λ_bopt + (1 - λ_bopt) * (k^-2) * (T - T_opt)^2) #zie functie growth_b maar draai het om en doe plus λ_bopt
+    else
+        return(1)
+    end
+end
+p_i = Dict(
+
+    :d0 => 200.0, #Starting height by L = 0
+
+    :α_f => 0.5,
+    :α_m => 2.0,
+
+    :ϵ => 1.0,
+    :δ => 1.127,
+    :c => 2.4,
+    :β => 0.005,
+
+    :E0 => 100.0,
+    :T0 => 265.0,
+    :k => 2.0
+)
 p = Dict(
     :σ => 5.670e-8, #Stefanboltzman constante
     :S => 1368.0,    #Solar impact (energy from sun)
@@ -44,25 +120,17 @@ p = Dict(
     :τ_L => 1.0e-1, # Glacier
     :τ_b => 1.0 # plants
     )
- 
-   
-print(p)
 
-diffeq = (; alg = Vern9(), dt=1e-4)
+diffeq = (; alg = Tsit5(), abstol=1e-10, reltol=1e-10)
 
 u0 = [263.0, 0.3, 1.0e3] #Starting value of T, b, L
 t0 = 0.0 #Starting time
 ds = CoupledODEs(antarctica, u0, p; diffeq) #Runs the function over time
 
-t_total = 2.0e4
+t_total = 1.5e4
 dt = 1.0 
 #dt is how much you increment time each calculation, and t_total is when it stops
 X, t = trajectory(ds, t_total; Δt=dt)
-
-println("test")
-println(X)
-
-println(X[2])
 
 X_columns = columns(X) #X is a matrix of results, columns seperates these
 #println(X_columns[1])

@@ -1,0 +1,150 @@
+
+# ==========================================
+# ATTRACTORS AND BIFURCATION DIAGRAM
+# Put this BELOW your model definitions
+# ==========================================
+
+function main()
+
+    # Numerical solver
+    diffeq = (
+        alg = Tsit5(),
+        abstol = 1e-10,
+        reltol = 1e-10 #precision
+    )
+
+    # Initial state for creating the dynamical system
+    u0 = [263.0, 0.3, 1.0e3]
+
+    ds = CoupledODEs(
+        antarctica,
+        u0,
+        p;
+        diffeq
+    )
+
+    # --------------------------------------
+    # 1. GRID OF STARTING CONDITIONS
+    # --------------------------------------
+
+    grid = (
+        range(164.0, 350.0; length = 12),  # T
+        range(0.01, 0.99; length = 5),    # b
+        range(1.0e3, 1.0e5; length = 12)   # L
+    )
+
+    println("Grid points: ",
+        length(grid[1]) *
+        length(grid[2]) *
+        length(grid[3])
+    )
+
+    # --------------------------------------
+    # 2. FIND ATTRACTORS
+    # --------------------------------------
+
+    bmap = BasinMapRecurrences(
+        ds,
+        grid;
+        consecutive_recurrences = 100,
+        attractor_locate_steps = 1000,
+        consecutive_lost_steps = 100,
+        sparse = false
+    )
+
+    # Sample starting conditions
+    sampler = RandomICsSampler(100, grid)
+
+    # Emissivity values from 0 to 1
+    # E_values = range(0.0, 1.0; length = 21)
+
+    # Tell Julia which parameter to vary
+    # pcurve = [Dict(:E => E) for E in E_values]
+    
+    # Eerst een grovere bifurcatiediagram maken
+    E_values = range(0.0, 1.0; length=3)
+    pcurve = [Dict(:E => E) for E in E_values]
+
+    # Continue attractors across the emissivity range
+    ascm = AttractorSeedContinueMatch(bmap)
+
+    result = global_continuation(
+        ascm,
+        pcurve,
+        sampler
+    )
+
+    attractors_cont = result.attractors
+
+    # --------------------------------------
+    # 3. COLLECT THE ATTRACTOR STATES
+    # --------------------------------------
+
+    E_plot = Float64[]
+    T_plot = Float64[]
+    b_plot = Float64[]
+    I_plot = Float64[]
+
+    for i in eachindex(E_values)
+
+        # Each dictionary can contain multiple attractors
+        for A in values(attractors_cont[i])
+
+            # Use the first recorded point of each attractor.
+            # This is appropriate for a fixed-point equilibrium.
+            state = A[1]
+
+            T_eq = state[1]
+            b_eq = state[2]
+            L_eq = state[3]
+            I_eq = ice_cover(L_eq)
+
+            if all(isfinite, [T_eq, b_eq, L_eq, I_eq])
+                push!(E_plot, E_values[i])
+                push!(T_plot, T_eq)
+                push!(b_plot, b_eq)
+                push!(I_plot, I_eq)
+            end
+        end
+    end
+
+    println("Attractor states collected: ", length(T_plot))
+
+    # --------------------------------------
+    # 4. PLOT BIFURCATION DIAGRAMS
+    # --------------------------------------
+
+    fig = Figure(size = (1200, 800))
+
+    axT = Axis(
+        fig[1, 1],
+        xlabel = "Emissivity (E)",
+        ylabel = "Equilibrium temperature (T)",
+        title = "Temperature"
+    )
+
+    axb = Axis(
+        fig[1, 2],
+        xlabel = "Emissivity (E)",
+        ylabel = "Equilibrium plant cover (b)",
+        title = "Plant cover"
+    )
+
+    axI = Axis(
+        fig[2, 1],
+        xlabel = "Emissivity (E)",
+        ylabel = "Equilibrium ice cover (I)",
+        title = "Ice cover"
+    )
+
+    scatter!(axT, E_plot, T_plot; markersize = 7)
+    scatter!(axb, E_plot, b_plot; markersize = 7)
+    scatter!(axI, E_plot, I_plot; markersize = 7)
+
+    ylims!(axb, -0.05, 1.05)
+    ylims!(axI, -0.05, 1.05)
+
+    fig
+end
+
+main()
